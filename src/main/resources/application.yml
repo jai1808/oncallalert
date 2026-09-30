@@ -1,0 +1,58 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+# ──────────────────────────────────────────────
+# OpenSearch
+# ──────────────────────────────────────────────
+opensearch:
+  url: ${OPENSEARCH_URL:https://localhost:9200}
+  username: ${OPENSEARCH_USERNAME:admin}
+  password: ${OPENSEARCH_PASSWORD:admin}
+  index-name: ${OPENSEARCH_INDEX_NAME:application-logs}
+  connect-timeout: ${OPENSEARCH_CONNECT_TIMEOUT:5000}
+  socket-timeout: ${OPENSEARCH_SOCKET_TIMEOUT:30000}
+
+# ──────────────────────────────────────────────
+# DeepSeek LLM
+# ──────────────────────────────────────────────
+deepseek:
+  api-key: ${DEEPSEEK_API_KEY:<Enter your LLM key here>}
+  base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+  model: ${DEEPSEEK_MODEL:deepseek-chat}
+  max-tokens: ${DEEPSEEK_MAX_TOKENS:2048}
+  temperature: ${DEEPSEEK_TEMPERATURE:0.3}
+
+# ──────────────────────────────────────────────
+# Alert Settings
+# ──────────────────────────────────────────────
+alert:
+  log-window-minutes: ${ALERT_LOG_WINDOW_MINUTES:15}
+  error-message-prefix: "Error during Document Generation"
+  cooldown-seconds: ${ALERT_COOLDOWN_SECONDS:300}
+  oncall-default-email: ${ONCALL_DEFAULT_EMAIL:<Enter your on-call email here>}
+  from-email: ${ALERT_FROM_EMAIL:<Enter your from email here>}
+
+# ──────────────────────────────────────────────
+# Email (SMTP)
+# ──────────────────────────────────────────────
+spring:
+  mail:
+    host: ${SMTP_HOST:<Enter your SMTP host here>}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:<Enter your SMTP username here>}
+    password: ${SMTP_PASSWORD:<Enter your SMTP password here>}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

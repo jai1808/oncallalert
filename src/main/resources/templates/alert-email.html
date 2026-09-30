@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px;
+               background: #f5f5f5; color: #333; }
+        .container { max-width: 800px; margin: auto; background: #fff;
+                     border-radius: 8px; overflow: hidden;
+                     box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: #d32f2f; color: white; padding: 20px 30px; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
+        .body-content { padding: 20px 30px; }
+        .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .meta-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+        .meta-table td:first-child { font-weight: 600; width: 180px; color: #666; }
+        .error-card { border: 1px solid #e0e0e0; border-radius: 6px;
+                      margin-bottom: 16px; overflow: hidden; }
+        .error-card-header { padding: 12px 16px; font-weight: 600; font-size: 14px; }
+        .error-card-header.critical { background: #ffebee; color: #c62828; }
+        .error-card-header.known { background: #fff3e0; color: #e65100; }
+        .error-card-body { padding: 12px 16px; font-size: 13px; }
+        .error-card-body table { width: 100%; border-collapse: collapse; }
+        .error-card-body td { padding: 4px 8px; vertical-align: top; }
+        .error-card-body td:first-child { font-weight: 600; width: 140px; color: #666; }
+        .known-badge { display: inline-block; background: #ff9800; color: white;
+                       padding: 2px 8px; border-radius: 10px; font-size: 11px;
+                       margin-left: 8px; }
+        .remediation { background: #e8f5e9; border-left: 4px solid #4caf50;
+                       padding: 12px 16px; margin: 10px 0; font-size: 13px;
+                       border-radius: 0 4px 4px 0; white-space: pre-wrap; }
+        .known-note { background: #fff3e0; border-left: 4px solid #ff9800;
+                      padding: 12px 16px; margin: 10px 0; font-size: 13px;
+                      border-radius: 0 4px 4px 0; }
+        .footer { background: #fafafa; padding: 15px 30px; font-size: 12px;
+                  color: #999; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Document Generation Alert</h1>
+        <p th:text="'Report ID: ' + ${report.reportId}
+            + ' | Generated: ' + ${report.generatedAt}">Report Info</p>
+    </div>
+
+    <div class="body-content">
+        <h3>Summary</h3>
+        <table class="meta-table">
+            <tr><td>Time Window</td>
+                <td th:text="${report.windowStart} + ' → ' + ${report.windowEnd}"></td></tr>
+            <tr><td>Index</td>
+                <td th:text="${report.indexName}"></td></tr>
+            <tr><td>Total Errors</td>
+                <td th:text="${report.totalErrorCount}"></td></tr>
+            <tr><td>Unique Error Groups</td>
+                <td th:text="${#lists.size(report.errorSummaries)}"></td></tr>
+        </table>
+
+        <h3>Error Details</h3>
+        <div th:each="error : ${report.errorSummaries}">
+            <div class="error-card">
+                <div class="error-card-header"
+                     th:classappend="${error.knownError} ? 'known' : 'critical'">
+                    <span th:text="${error.errorCode} + ' — ' + ${error.documentType}">
+                    </span>
+                    <span th:if="${error.knownError}" class="known-badge">KNOWN ERROR</span>
+                    <span style="float:right"
+                          th:text="'×' + ${error.occurrenceCount} + ' occurrences'"></span>
+                </div>
+                <div class="error-card-body">
+                    <table>
+                        <tr><td>Error Message</td>
+                            <td th:text="${error.errorMessage}"></td></tr>
+                        <tr><td>Failed API</td>
+                            <td th:text="${error.api}"></td></tr>
+                        <tr><td>First Seen</td>
+                            <td th:text="${error.firstOccurrence}"></td></tr>
+                        <tr><td>Last Seen</td>
+                            <td th:text="${error.lastOccurrence}"></td></tr>
+                        <tr><td>Sample Trace IDs</td>
+                            <td th:text="${#strings.listJoin(error.sampleTraceIds, ', ')}">
+                            </td></tr>
+                    </table>
+
+                    <div th:if="${error.knownError}" class="known-note">
+                        <strong>Known Error:</strong>
+                        <span th:text="${error.knownErrorNote}"></span>
+                    </div>
+
+                    <div class="remediation">
+                        <strong>AI Remediation (DeepSeek):</strong><br/>
+                        <span th:utext="${error.remediationSuggestion}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Generated by OnCall Alert System | Do not reply to this email
+    </div>
+</div>
+</body>
+</html>

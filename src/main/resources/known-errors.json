@@ -1,0 +1,42 @@
+[
+  {
+    "errorCode": "DOC_GEN_001",
+    "errorMessagePattern": "Template not found",
+    "documentTypes": ["INVOICE", "RECEIPT"],
+    "severity": "ignorable",
+    "note": "This error occurs when a legacy template ID is referenced. The system falls back to the default template automatically.",
+    "resolution": "No action needed. The fallback mechanism handles this gracefully."
+  },
+  {
+    "errorCode": "DOC_GEN_002",
+    "errorMessagePattern": "Timeout waiting for upstream",
+    "documentTypes": [],
+    "severity": "warning",
+    "note": "Transient timeout to the upstream rendering service. Usually self-resolves within 2-3 minutes.",
+    "resolution": "Monitor for 5 minutes. If it persists beyond 10 minutes, check the rendering service health."
+  },
+  {
+    "errorCode": "DOC_GEN_003",
+    "errorMessagePattern": "Font resource unavailable",
+    "documentTypes": ["STATEMENT", "TAX_FORM"],
+    "severity": "ignorable",
+    "note": "Known issue with the font CDN during deployments. The system uses a fallback font.",
+    "resolution": "No immediate action. This is tracked in JIRA-4521."
+  },
+  {
+    "errorCode": "DOC_GEN_004",
+    "errorMessagePattern": "Rate limit exceeded",
+    "documentTypes": [],
+    "severity": "warning",
+    "note": "The document generation API hit the rate limiter. Requests are queued and retried.",
+    "resolution": "Check current traffic levels. If sustained, coordinate with the platform team to increase limits."
+  },
+  {
+    "errorCode": "DOC_GEN_005",
+    "errorMessagePattern": "Stale cache entry",
+    "documentTypes": [],
+    "severity": "ignorable",
+    "note": "Cache invalidation lag after a recent deployment. Resolves automatically within 5-10 minutes.",
+    "resolution": "No action needed. The cache TTL will expire naturally."
+  }
+]
